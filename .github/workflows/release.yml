@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: false
+        default: 'v1.0.0'
 
 permissions:
   contents: write
@@ -30,11 +35,24 @@ jobs:
         run: |
           ditto -c -k --sequesterRsrc --keepParent /Applications/TheHolyPdf.app TheHolyPdf-macOS.zip
 
+      - name: Determine Release Tag
+        id: tag_info
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG="v1.0.0"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag_info.outputs.tag }}
           files: TheHolyPdf-macOS.zip
-          name: Release ${{ github.ref_name }}
+          name: TheHolyPdf ${{ steps.tag_info.outputs.tag }}
           draft: false
           prerelease: false
           generate_release_notes: true
