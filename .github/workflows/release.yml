@@ -31,6 +31,14 @@ jobs:
         run: |
           ./build_app.sh
 
+      - name: Create DMG Installer
+        run: |
+          mkdir -p dmg_staging
+          cp -R /Applications/TheHolyPdf.app dmg_staging/
+          ln -s /Applications dmg_staging/Applications
+          hdiutil create -volname "TheHolyPdf" -srcfolder dmg_staging -ov -format UDZO TheHolyPdf-Installer.dmg
+          rm -rf dmg_staging
+
       - name: Create Release Archive
         run: |
           ditto -c -k --sequesterRsrc --keepParent /Applications/TheHolyPdf.app TheHolyPdf-macOS.zip
@@ -51,7 +59,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag_info.outputs.tag }}
-          files: TheHolyPdf-macOS.zip
+          files: |
+            TheHolyPdf-Installer.dmg
+            TheHolyPdf-macOS.zip
           name: TheHolyPdf ${{ steps.tag_info.outputs.tag }}
           draft: false
           prerelease: false
