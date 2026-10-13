@@ -8,5 +8,6 @@
 Package.resolved
 TheHolyPdf.app/
 *.o
-*.dSYM/
 AppIcon.iconset/
+/TheHolyPdf
+/main
