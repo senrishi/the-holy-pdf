@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Publish Release
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup App Directory
+        run: |
+          chmod +x ./build_app.sh
+
+      - name: Build Application Bundle
+        run: |
+          ./build_app.sh
+
+      - name: Create Release Archive
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent /Applications/TheHolyPdf.app TheHolyPdf-macOS.zip
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TheHolyPdf-macOS.zip
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

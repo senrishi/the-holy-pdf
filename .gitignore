@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Swift / Build artifacts
+.build/
+Package.resolved
+TheHolyPdf.app/
+*.o
+*.dSYM/
+AppIcon.iconset/
