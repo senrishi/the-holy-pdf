@@ -1,6 +1,6 @@
 # TheHolyPdf
 
-A native macOS AppKit application combining the **hardware-accelerated Core Image rendering engine of Negative.app** with the **UI/UX, thumbnail sidebar, and markup architecture of Apple Preview**.
+A native macOS AppKit application combining the **hardware-accelerated Core Image rendering engine of Negative** with the **UI/UX, thumbnail sidebar, and markup architecture of Apple Preview**.
 
 ---
 
@@ -30,11 +30,10 @@ A native macOS AppKit application combining the **hardware-accelerated Core Imag
 ## Key Features & Reverse-Engineered Implementations
 
 ### 1. Negative's Exact Rendering Filter Pipeline
-Directly reconstructed from [`Negative.app`](/Applications/Negative.app) (Mach-O ARM64 IMP `0x10000c810`):
+Directly reconstructed from `Negative`:
 * **Hardware Layer Filtering (`CALayer.filters`)**:
   * **Normal Mode (`0`)**: Clears all Core Animation filters (`filters = nil`), sets `backgroundColor = NSColor.windowBackgroundColor`.
-  * **Negative Mode (`1`)**: Sets `backgroundColor = NSColor.white` (inverts to `#000000`), instantiates and applies `[CIColorInvert, CISharpenLuminance]` to `pdfView.layer?.filters`.
-  * **Negative Sepia Mode (`2`)**: Sets `backgroundColor = NSColor.white`, instantiates and applies `[CIColorInvert, CISharpenLuminance, CISepiaTone]`.
+  * **Sepia Mode (`1`)**: Sets `backgroundColor = NSColor.white` (inverts to `#000000`), instantiates and applies `[CIColorInvert, CISharpenLuminance]` to `pdfView.layer?.filters`.
 * **Zero Geometry Mutation**:
   * Because the filters run in the GPU composition pass, PDF page geometries, glyph metrics, and text structures remain untouched.
   * Native text selection, cursor rects, drag-to-select, copy-paste, and 120Hz inertial scrolling remain fully functional without interference.
@@ -71,8 +70,7 @@ Directly reconstructed from [`Negative.app`](/Applications/Negative.app) (Mach-O
 | Shortcut | Action |
 | :--- | :--- |
 | `⌘1` | Normal Mode (Original PDF colors) |
-| `⌘2` | Negative Mode (Inverted + Sharpened) |
-| `⌘3` | Negative Sepia Mode (Inverted + Sepia) |
+| `⌘2` | Dark Mode (Inverted + Sharpened) |
 | `⌥⌘1` | Toggle Left Thumbnail Sidebar |
 | `⇧⌘A` | Toggle Markup Accessory Bar |
 | `⌫` / `Delete` | Delete Selected Page (in sidebar) or Selected Annotation |
@@ -85,7 +83,7 @@ Directly reconstructed from [`Negative.app`](/Applications/Negative.app) (Mach-O
 
 ## How to Build and Run
 
-From `/Users/rishi/DEV/TheHolyPdf`:
+From `TheHolyPdf` directory:
 
 ```bash
 # Compile and create TheHolyPdf.app bundle
