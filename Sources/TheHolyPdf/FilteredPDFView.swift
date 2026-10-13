@@ -16,8 +16,8 @@ open class FilteredPDFView: PDFView, NSTextViewDelegate {
         }
     }
 
-    /// Automatically syncs with macOS Light Mode / Dark Mode
-    public var shouldSystemChangeColor: Bool = true {
+    /// Automatically syncs with macOS Light Mode / Dark Mode (defaults to false to respect user selection)
+    public var shouldSystemChangeColor: Bool = false {
         didSet {
             if shouldSystemChangeColor {
                 updateForSystemAppearance()
@@ -257,21 +257,16 @@ open class FilteredPDFView: PDFView, NSTextViewDelegate {
     }
 
     private func isSystemDarkMode() -> Bool {
-        let appearance = self.effectiveAppearance
+        let appearance = NSApp.effectiveAppearance
         let match = appearance.bestMatch(from: [.darkAqua, .aqua])
         return match == .darkAqua
     }
 
     private func updateForSystemAppearance() {
+        guard shouldSystemChangeColor else { return }
         let isDark = isSystemDarkMode()
-        if isDark {
-            if renderingMode == .clear {
-                renderingMode = .negative
-            }
-        } else {
-            if renderingMode == .negative || renderingMode == .negativeSepia {
-                renderingMode = .clear
-            }
+        if isDark && renderingMode == .clear {
+            renderingMode = .negative
         }
     }
 

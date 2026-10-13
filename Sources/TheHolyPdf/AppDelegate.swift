@@ -12,6 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Bring application to front
         NSApp.setActivationPolicy(.regular)
+        NSApp.appearance = NSAppearance(named: .darkAqua)
         NSApp.activate(ignoringOtherApps: true)
 
         // When opened directly, prompt user with an Open dialog (typical macOS Preview launch behavior)

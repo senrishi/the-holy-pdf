@@ -14,11 +14,12 @@ open class MainSplitViewController: NSSplitViewController {
         super.viewDidLoad()
 
         // Configure Split Items
-        sidebarSplitItem = NSSplitViewItem(sidebarWithViewController: sidebarVC)
+        sidebarSplitItem = NSSplitViewItem(viewController: sidebarVC)
         sidebarSplitItem.minimumThickness = 120
         sidebarSplitItem.maximumThickness = 360
         sidebarSplitItem.preferredThicknessFraction = 0.17
         sidebarSplitItem.canCollapse = true
+        sidebarSplitItem.holdingPriority = .defaultLow + 1
 
         documentSplitItem = NSSplitViewItem(viewController: documentVC)
 
@@ -31,7 +32,19 @@ open class MainSplitViewController: NSSplitViewController {
         self.splitView.dividerStyle = .thin
     }
 
+    open override func splitViewDidResizeSubviews(_ notification: Notification) {
+        super.splitViewDidResizeSubviews(notification)
+        if let wc = self.view.window?.windowController as? MainWindowController {
+            wc.enforceDarkAppearanceOnWindowHierarchy()
+        }
+    }
+
     public func toggleSidebar() {
         sidebarSplitItem.animator().isCollapsed.toggle()
+        DispatchQueue.main.async { [weak self] in
+            if let wc = self?.view.window?.windowController as? MainWindowController {
+                wc.enforceDarkAppearanceOnWindowHierarchy()
+            }
+        }
     }
 }

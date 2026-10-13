@@ -257,8 +257,11 @@ open class SidebarViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     open override func loadView() {
-        let container = NSView()
-        container.wantsLayer = true
+        let container = NSVisualEffectView()
+        container.material = .sidebar
+        container.blendingMode = .behindWindow
+        container.state = .followsWindowActiveState
+        container.appearance = NSAppearance(named: .darkAqua)
         self.view = container
 
         setupUI()

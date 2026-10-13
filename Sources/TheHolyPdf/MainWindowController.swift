@@ -12,6 +12,7 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
     private var pageNumberInputField: NSTextField!
     private var pageTotalLabel: NSTextField!
     private var markupToolbarButton: NSButton!
+    private var allToolbarViews: [NSView] = []
 
     public init() {
         let window = NSWindow(
@@ -25,6 +26,9 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
         window.titleVisibility = .hidden
         window.toolbarStyle = .unified
         window.titlebarSeparatorStyle = .none
+        window.titlebarAppearsTransparent = true
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.backgroundColor = .black
         window.minSize = NSSize(width: 760, height: 520)
         window.center()
 
@@ -94,6 +98,10 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
 
     public func windowWillClose(_ notification: Notification) {
         (NSApp.delegate as? AppDelegate)?.removeWindowController(self)
+    }
+
+    public func windowDidResize(_ notification: Notification) {
+        updateWindowAppearance(for: splitViewController.documentVC.pdfView.renderingMode)
     }
 
     // MARK: - Toolbar Setup (Matching Preview UI/UX)
@@ -264,6 +272,11 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
             return nil
         }
 
+        if let v = item.view, !allToolbarViews.contains(where: { $0 === v }) {
+            allToolbarViews.append(v)
+            v.appearance = NSAppearance(named: .darkAqua)
+        }
+
         return item
     }
 
@@ -271,6 +284,10 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
 
     @objc private func toggleSidebarClicked(_ sender: Any?) {
         splitViewController.toggleSidebar()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.updateWindowAppearance(for: self.splitViewController.documentVC.pdfView.renderingMode)
+        }
     }
 
     @objc private func renderingModeChanged(_ sender: NSSegmentedControl) {
@@ -445,13 +462,46 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
 
     public func updateWindowAppearance(for mode: RenderingMode) {
         guard let window = self.window else { return }
+        let darkAppearance = NSAppearance(named: .darkAqua)
+        let bgColor: NSColor
+
         switch mode {
         case .clear:
-            window.appearance = nil
-            window.backgroundColor = NSColor.windowBackgroundColor
+            bgColor = NSColor(calibratedWhite: 0.12, alpha: 1.0)
         case .negative, .negativeSepia:
-            window.appearance = NSAppearance(named: .darkAqua)
-            window.backgroundColor = NSColor(calibratedRed: 0.08, green: 0.08, blue: 0.08, alpha: 1.0)
+            bgColor = NSColor.black
+        }
+
+        NSApp.appearance = darkAppearance
+        window.appearance = darkAppearance
+        window.backgroundColor = bgColor
+        splitViewController.view.appearance = darkAppearance
+
+        for view in allToolbarViews {
+            view.appearance = darkAppearance
+            if let stack = view as? NSStackView {
+                for sub in stack.arrangedSubviews {
+                    sub.appearance = darkAppearance
+                }
+            }
+        }
+
+        enforceDarkAppearanceOnWindowHierarchy()
+    }
+
+    public func enforceDarkAppearanceOnWindowHierarchy() {
+        guard let window = self.window else { return }
+        let darkAppearance = NSAppearance(named: .darkAqua)
+        window.appearance = darkAppearance
+        if let themeFrame = window.contentView?.superview {
+            applyAppearanceRecursively(to: themeFrame, appearance: darkAppearance)
+        }
+    }
+
+    private func applyAppearanceRecursively(to view: NSView, appearance: NSAppearance?) {
+        view.appearance = appearance
+        for subview in view.subviews {
+            applyAppearanceRecursively(to: subview, appearance: appearance)
         }
     }
 }
