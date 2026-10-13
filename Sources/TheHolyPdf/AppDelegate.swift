@@ -231,15 +231,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         viewMenu.addItem(NSMenuItem.separator())
 
-        // Rendering Modes matching Negative.app shortcuts
-        let clearMode = NSMenuItem(title: "Normal Rendering Mode", action: #selector(setClearModeAction(_:)), keyEquivalent: "1")
+        // Rendering Modes: Normal and Dark
+        let clearMode = NSMenuItem(title: "Normal Mode", action: #selector(setClearModeAction(_:)), keyEquivalent: "1")
         viewMenu.addItem(clearMode)
 
-        let negativeMode = NSMenuItem(title: "Negative Invert Mode", action: #selector(setNegativeModeAction(_:)), keyEquivalent: "2")
-        viewMenu.addItem(negativeMode)
-
-        let sepiaMode = NSMenuItem(title: "Negative Sepia Mode", action: #selector(setNegativeSepiaModeAction(_:)), keyEquivalent: "3")
-        viewMenu.addItem(sepiaMode)
+        let darkMode = NSMenuItem(title: "Dark Mode", action: #selector(setDarkModeAction(_:)), keyEquivalent: "2")
+        viewMenu.addItem(darkMode)
 
         viewMenu.addItem(NSMenuItem.separator())
 
@@ -418,14 +415,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.post(name: .changeRenderingModeNotification, object: RenderingMode.clear.rawValue)
     }
 
-    @objc private func setNegativeModeAction(_ sender: Any?) {
-        activeWindowController?.splitViewController.documentVC.pdfView.renderingMode = .negative
-        NotificationCenter.default.post(name: .changeRenderingModeNotification, object: RenderingMode.negative.rawValue)
-    }
-
-    @objc private func setNegativeSepiaModeAction(_ sender: Any?) {
-        activeWindowController?.splitViewController.documentVC.pdfView.renderingMode = .negativeSepia
-        NotificationCenter.default.post(name: .changeRenderingModeNotification, object: RenderingMode.negativeSepia.rawValue)
+    @objc private func setDarkModeAction(_ sender: Any?) {
+        activeWindowController?.splitViewController.documentVC.pdfView.renderingMode = .dark
+        NotificationCenter.default.post(name: .changeRenderingModeNotification, object: RenderingMode.dark.rawValue)
     }
 
     @objc private func zoomInAction(_ sender: Any?) {
@@ -454,7 +446,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         • Multi-Document Support: Press ⌘O to open one or multiple PDF documents into separate windows.
         • Combine PDFs: Drag and drop any PDF from Finder directly into the thumbnail sidebar, or choose File > Combine / Insert Pages from File… (⇧⌘I).
         • Delete Pages: Click any page thumbnail and press Delete / Backspace (or ⌘⌫) to delete. Press ⌘Z to undo!
-        • Color Modes: Press ⌘1 for Normal, ⌘2 for Negative (Color Invert), and ⌘3 for Negative Sepia.
+        • Color Modes: Press ⌘1 for Normal Mode and ⌘2 for Dark Mode.
         • Markup Toolbar: Press ⇧⌘A or click the pencil icon to toggle the annotation bar.
         """
         alert.addButton(withTitle: "OK")

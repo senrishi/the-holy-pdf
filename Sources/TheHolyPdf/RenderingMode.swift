@@ -1,16 +1,17 @@
 import Cocoa
 
-/// Rendering modes matching Negative.app's core engine
+/// Rendering modes supporting high-contrast Normal and Dark modes
 @objc public enum RenderingMode: Int, CaseIterable {
-    case clear = 0          // Standard AppKit default appearance
-    case negative = 1       // CIColorInvert + CISharpenLuminance
-    case negativeSepia = 2  // CIColorInvert + CISharpenLuminance + CISepiaTone
+    case clear = 0          // Normal mode (white page, dark slate canvas)
+    case dark = 1           // Dark mode (hardware-accelerated CIColorInvert + CISharpenLuminance)
+
+    public static let normal = RenderingMode.clear
+    public static let negative = RenderingMode.dark
 
     public var title: String {
         switch self {
         case .clear: return "Normal"
-        case .negative: return "Negative"
-        case .negativeSepia: return "Sepia"
+        case .dark: return "Dark"
         }
     }
 }

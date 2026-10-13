@@ -107,7 +107,7 @@ public enum SampleDocumentGenerator {
         This PDF document demonstrates the exact rendering mechanism extracted from Negative.app (v2.0):
         • CALayer.filters: Inversion and Sharpening fragment shaders run in Core Animation composition passes.
         • Zero CPU re-rasterization: The underlying vector geometry and glyph coordinates are untouched.
-        • Intact Text Selection: Select and copy text below; notice how cursor rects, hit-testing, and highlight contrast remain pristine even in Negative and Sepia modes!
+        • Intact Text Selection: Select and copy text below; notice how cursor rects, hit-testing, and highlight contrast remain pristine even in Dark mode!
         • Smooth 120Hz Inertial Scrolling: Document textures are transformed directly on Apple Silicon GPU pipelines.
         """
         drawParagraph(bodyText, at: NSPoint(x: 40, y: currentY), width: bounds.width - 80)
@@ -151,7 +151,7 @@ public enum SampleDocumentGenerator {
         drawSectionHeading("Vector Primitives & High-Contrast Visual Test", at: NSPoint(x: 40, y: currentY))
         currentY -= 35
 
-        drawParagraph("The shapes below test color inversion and saturation handling between Normal, Negative, and Negative Sepia modes.", at: NSPoint(x: 40, y: currentY), width: bounds.width - 80)
+        drawParagraph("The shapes below test color inversion and saturation handling between Normal and Dark modes.", at: NSPoint(x: 40, y: currentY), width: bounds.width - 80)
         currentY -= 40
 
         // Draw colored geometric shapes

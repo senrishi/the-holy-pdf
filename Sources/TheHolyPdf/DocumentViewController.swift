@@ -9,13 +9,14 @@ open class DocumentViewController: NSViewController {
     open override func loadView() {
         let container = NSView()
         container.wantsLayer = true
+        container.layer?.backgroundColor = NSColor.black.cgColor
         self.view = container
 
         pdfView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(pdfView)
 
         NSLayoutConstraint.activate([
-            pdfView.topAnchor.constraint(equalTo: view.topAnchor),
+            pdfView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             pdfView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             pdfView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             pdfView.trailingAnchor.constraint(equalTo: view.trailingAnchor)

@@ -26,7 +26,7 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
         window.titleVisibility = .hidden
         window.toolbarStyle = .unified
         window.titlebarSeparatorStyle = .none
-        window.titlebarAppearsTransparent = true
+        window.titlebarAppearsTransparent = false
         window.appearance = NSAppearance(named: .darkAqua)
         window.backgroundColor = .black
         window.minSize = NSSize(width: 760, height: 520)
@@ -210,8 +210,8 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
         case Self.renderingModeItemID:
             item.label = "Mode"
             item.paletteLabel = "Color Mode"
-            item.toolTip = "Switch between Normal, Negative (Invert), and Sepia"
-            let seg = NSSegmentedControl(labels: ["Normal", "Negative", "Sepia"], trackingMode: .selectOne, target: self, action: #selector(renderingModeChanged(_:)))
+            item.toolTip = "Switch between Normal and Dark mode"
+            let seg = NSSegmentedControl(labels: ["Normal", "Dark"], trackingMode: .selectOne, target: self, action: #selector(renderingModeChanged(_:)))
             seg.selectedSegment = 0
             self.renderingSegmentedControl = seg
             item.view = seg
@@ -467,9 +467,9 @@ open class MainWindowController: NSWindowController, NSToolbarDelegate, NSWindow
 
         switch mode {
         case .clear:
-            bgColor = NSColor(calibratedWhite: 0.12, alpha: 1.0)
-        case .negative, .negativeSepia:
-            bgColor = NSColor.black
+            bgColor = .black
+        case .dark:
+            bgColor = .black
         }
 
         NSApp.appearance = darkAppearance

@@ -200,12 +200,12 @@ open class FilteredPDFView: PDFView, NSTextViewDelegate {
         case .clear:
             // 1. Remove all Core Animation filters
             hostLayer.filters = nil
-            // 2. Restore standard AppKit window chroming background
-            self.backgroundColor = NSColor.windowBackgroundColor
+            // 2. High-contrast dark slate background behind crisp white PDF pages
+            self.backgroundColor = NSColor(calibratedWhite: 0.15, alpha: 1.0)
             setPageShadowsEnabled(true)
-            self.pageBreakMargins = NSEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+            self.pageBreakMargins = NSEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
-        case .negative:
+        case .dark:
             // 1. Set background to pure white (inverts to pitch black #000000)
             self.backgroundColor = NSColor.white
             setPageShadowsEnabled(false)
@@ -217,21 +217,6 @@ open class FilteredPDFView: PDFView, NSTextViewDelegate {
 
             sharpenFilter.setValue(1.5, forKey: "inputSharpness")
             hostLayer.filters = [invertFilter, sharpenFilter]
-
-        case .negativeSepia:
-            // 1. Set background to pure white
-            self.backgroundColor = NSColor.white
-            setPageShadowsEnabled(false)
-            self.pageBreakMargins = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-
-            // 2. CIColorInvert + CISharpenLuminance + CISepiaTone
-            guard let invertFilter = CIFilter(name: "CIColorInvert"),
-                  let sharpenFilter = CIFilter(name: "CISharpenLuminance"),
-                  let sepiaFilter = CIFilter(name: "CISepiaTone") else { return }
-
-            sharpenFilter.setValue(1.5, forKey: "inputSharpness")
-            sepiaFilter.setValue(0.7, forKey: "inputIntensity")
-            hostLayer.filters = [invertFilter, sharpenFilter, sepiaFilter]
         }
 
         NotificationCenter.default.post(name: .changeRenderingModeNotification, object: renderingMode.rawValue)
@@ -266,7 +251,7 @@ open class FilteredPDFView: PDFView, NSTextViewDelegate {
         guard shouldSystemChangeColor else { return }
         let isDark = isSystemDarkMode()
         if isDark && renderingMode == .clear {
-            renderingMode = .negative
+            renderingMode = .dark
         }
     }
 
